@@ -16,8 +16,23 @@ function ($scope, $routeParams, $interval, $window, GameManager) {
     // INIT SECTION
     //
 
-    // init GameManager with route params
+    // init GameManager from the route params
     GameManager.init($routeParams.gridX, $routeParams.gridY, $routeParams.totalRounds);
+
+    // TEST WINNER
+    //GameManager.init(7, 6, 1);
+    //GameManager.grid = [
+    //    [0, 0, 0, 0, 0, 0],
+    //    [0, 0, 0, 2, 0, 0],
+    //    [0, 0, 2, 0, 0, 0],
+    //    [0, 2, 0, 0, 0, 0],
+    //    [2, 0, 0, 0, 0, 0],
+    //    [0, 0, 0, 0, 0, 0],
+    //    [0, 0, 0, 0, 0, 0]
+    //];
+    //
+    //console.log(GameManager.checkWinner(GameManager.grid));
+    // END TEST WINNER
 
     var isAnimating = false;
     var currentToken;
@@ -109,8 +124,14 @@ function ($scope, $routeParams, $interval, $window, GameManager) {
         if((currentToken.y + 1) < GameManager.gridY && GameManager.grid[currentToken.x][currentToken.y + 1] == GameManager.NONE) {
             currentToken.y++;
         } else {
-            GameManager.switchCurrentPlayer();
             isAnimating = false;
+
+            var winner = GameManager.checkWinner();
+            if(winner != GameManager.NONE) {
+                console.log("Player " + winner + " won the round !");
+                GameManager.reset();
+            }
+            GameManager.switchCurrentPlayer();
         }
     }
 

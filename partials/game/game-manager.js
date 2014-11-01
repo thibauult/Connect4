@@ -18,8 +18,8 @@ angular.module('c4GameManager', [])
         //
         this.grid;
 
-        this.gridX;
-        this.gridY;
+        this.gridX = 7;
+        this.gridY = 6;
 
         this.player1Score = 0;
         this.player2Score = 0;
@@ -52,6 +52,14 @@ angular.module('c4GameManager', [])
             }
         }
 
+        this.reset = function() {
+            for(var x = 0; x < this.gridX; x++) {
+                for (var y = 0; y < this.gridY; y++) {
+                    this.grid[x][y] = this.NONE;
+                }
+            }
+        }
+
         /**
          * Switch the current player
          */
@@ -62,21 +70,20 @@ angular.module('c4GameManager', [])
         }
 
         /**
-         * Check if someone has won the round
+         * Check if someone won the round
          *
-         * @param gridModel Multi-dimensional array representing the game board
          * @return 1 if Player 1 win, 2 if Player 2 win, 0 otherwise
          */
-        this.checkWinner = function(gridModel) {
+        this.checkWinner = function() {
 
             var winner = this.NONE;
 
-            if(checkAlignment(this.PLAYER_1, gridModel, this.gridX, this.gridY)) {
+            if(checkAlignment(this.PLAYER_1, this.grid, this.gridX, this.gridY)) {
                 this.player1Score++;
                 winner = this.PLAYER_1;
             }
 
-            if(checkAlignment(this.PLAYER_2, gridModel, this.gridX, this.gridY)) {
+            if(winner == this.NONE && checkAlignment(this.PLAYER_2, this.grid, this.gridX, this.gridY)) {
                 this.player2Score++;
                 winner = this.PLAYER_2;
             }
@@ -90,6 +97,65 @@ angular.module('c4GameManager', [])
 
         function checkAlignment(player, grid, gridX, gridY) {
 
+            // check horizontal alignment
+            for(var y = 0; y < gridY; y++) {
+                for(var x = 0; x < gridX; x++) {
+
+                    if(grid[x + 3] != undefined) {
+                        if( grid[x + 0][y] == player &&
+                            grid[x + 1][y] == player &&
+                            grid[x + 2][y] == player &&
+                            grid[x + 3][y] == player) {
+                            return player;
+                        }
+                    }
+                }
+            }
+
+            // check vertical alignment
+            for(var x = 0; x < gridX; x++) {
+                for(var y = 0; y < gridY; y++) {
+
+                    if(grid[x][y + 3] != undefined) {
+                        if( grid[x][y + 0] == player &&
+                            grid[x][y + 1] == player &&
+                            grid[x][y + 2] == player &&
+                            grid[x][y + 3] == player) {
+                            return player;
+                        }
+                    }
+                }
+            }
+
+            // check top left to bottom right diagonal (should be optimized !!)
+            for(var x = 0; x < gridX; x++) {
+                for (var y = 0; y < gridY; y++) {
+
+                    if(grid[x + 3] != undefined && grid[x][y + 3] != undefined) {
+                        if( grid[x + 0][y + 0] == player &&
+                            grid[x + 1][y + 1] == player &&
+                            grid[x + 2][y + 2] == player &&
+                            grid[x + 3][y + 3] == player) {
+                            return player;
+                        }
+                    }
+                }
+            }
+
+            // check top right to bottom left diagonal (should be optimized !!)
+            for(var x = gridX - 1; x >= 0; x--) {
+                for (var y = 0; y < gridY; y++) {
+
+                    if(grid[x - 3] != undefined && grid[x][y + 3] != undefined) {
+                        if( grid[x - 0][y + 0] == player &&
+                            grid[x - 1][y + 1] == player &&
+                            grid[x - 2][y + 2] == player &&
+                            grid[x - 3][y + 3] == player) {
+                            return player;
+                        }
+                    }
+                }
+            }
         }
 
         /**
