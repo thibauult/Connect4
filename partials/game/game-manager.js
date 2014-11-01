@@ -16,8 +16,10 @@ angular.module('c4GameManager', [])
         //
         // ATTRIBUTES
         //
-        this.gridX = 7;
-        this.gridY = 6;
+        this.grid;
+
+        this.gridX;
+        this.gridY;
 
         this.player1Score = 0;
         this.player2Score = 0;
@@ -29,6 +31,27 @@ angular.module('c4GameManager', [])
         //
         // METHODS
         //
+        /**
+         * Init the GameManager
+         *
+         * @param gridX Columns
+         * @param gridY Lines
+         */
+        this.init = function(gridX, gridY, totalRounds) {
+
+            this.gridX = gridX;
+            this.gridY = gridY;
+            this.totalRounds = totalRounds;
+
+            this.grid = new Array(gridX);
+            for (var x = 0; x < gridX; x++) {
+                this.grid[x] = new Array(gridY);
+                for (var y = 0; y < gridY; y++) {
+                    this.grid[x][y] = this.NONE;
+                }
+            }
+        }
+
         /**
          * Switch the current player
          */
@@ -67,18 +90,23 @@ angular.module('c4GameManager', [])
 
         function checkAlignment(player, grid, gridX, gridY) {
 
-            // horizontal alignment
-            for(var y = 0; y < this.gridY; y--) {
-                for(var x = 0; x < this.gridX; x++) {
+        }
 
-                    if( grid[x][y] == player &&
-                        grid[x + 1][y] == player &&
-                        grid[x + 2][y] == player &&
-                        grid[x + 3][y] == player) {
+        /**
+         *
+         * @param type
+         * @return {string}
+         */
+        this.getColor = function(type) {
 
-                        return true;
-                    }
-                }
+            var color = "#FFFFFF";
+
+            if(type == this.PLAYER_1) {
+                color = "#FF0000";
+            } else if(type == this.PLAYER_2) {
+                color = "#FFFF00";
             }
+
+            return color;
         }
 });

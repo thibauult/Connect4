@@ -19,32 +19,7 @@
     margin: 10px
 }
 
-.jumbotron h1 {
-    text-shadow: 1px 1px 1px #656565;
-    -webkib-text-shadow: 1px 1px 1px #656565;
-    -moz-text-shadow: 1px 1px 1px #656565;
-}
-
-.jumbotron canvas {
+#canvas {
     /*width: 100%;*/
     /*height: 100%;*/
-}
-
-#scores .glyphicon {
-    font-size: 24px;
-    text-shadow: 1px 1px 1px #656565;
-    -webkib-text-shadow: 1px 1px 1px #656565;
-    -moz-text-shadow: 1px 1px 1px #656565;
-}
-
-#scores .player1 .glyphicon {
-    color: red;
-}
-
-#scores .player2 .glyphicon {
-    color: #ffff00;
-}
-
-#scores strong {
-    font-size: 1.2em;
 }
