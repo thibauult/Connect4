@@ -1,6 +1,19 @@
 /**
  * Created by tibus on 31/10/14.
  */
+
+.header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.header h3 {
+    color: #777777;
+    font-size: 24px;
+    line-height: 40px;
+    margin: 10px;
+}
+
 .jumbotron {
     padding: 10px;
     margin: 10px
@@ -15,5 +28,23 @@
 .jumbotron canvas {
     /*width: 100%;*/
     /*height: 100%;*/
-    /*text-align: center;*/
+}
+
+#scores .glyphicon {
+    font-size: 24px;
+    text-shadow: 1px 1px 1px #656565;
+    -webkib-text-shadow: 1px 1px 1px #656565;
+    -moz-text-shadow: 1px 1px 1px #656565;
+}
+
+#scores .player1 .glyphicon {
+    color: red;
+}
+
+#scores .player2 .glyphicon {
+    color: #ffff00;
+}
+
+#scores strong {
+    font-size: 1.2em;
 }

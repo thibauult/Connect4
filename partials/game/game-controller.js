@@ -9,12 +9,23 @@ Game.PLAYER_2 = 2;
 
 Game.DEBUG = false;
 
-c4Controllers.controller('GameCtrl', ['$scope', '$routeParams', 'GameManager',
-function ($scope, $routeParams, GameManager) {
+c4Controllers.controller('GameCtrl', ['$scope', '$routeParams', '$interval', 'GameManager',
+function ($scope, $routeParams, $interval, GameManager) {
 
-    $scope.player1 = $routeParams.player1;
-    $scope.player2 = $routeParams.player2;
-    GameManager.nbRounds = $routeParams.nbRounds;
+    // init $scope
+    $scope.player1 = {
+        name : $routeParams.player1,
+        score : 0
+    };
+    $scope.player2 = {
+        name : $routeParams.player2,
+        score : 0
+    };
+
+    // init GameManager
+    GameManager.nbRounds = $routeParams.totalRounds;
+    GameManager.currentPlayer = GameManager.PLAYER_1;
+
 
     var gridX = $routeParams.gridX;
     var gridY = $routeParams.gridY;
@@ -31,7 +42,6 @@ function ($scope, $routeParams, GameManager) {
     var radius = diam / 2 - gap;
 
     var currentTokenPositionInGrid;
-    var currentPlayer = GameManager.PLAYER_1;
     var isModelDirty = false;
 
     var canvas = document.getElementById('canvas');
@@ -41,7 +51,7 @@ function ($scope, $routeParams, GameManager) {
     canvas.height = height;
     context.globalAlpha = 1.0;
     canvas.addEventListener(GameManager.CLICK_EVENT_TYPE, onClick, false);
-    setInterval(animate, 100); // initialize rendering loop
+    $interval(animate, 100); // initialize rendering loop
 
     //
     // ON CLICK CALLBACK
@@ -49,20 +59,37 @@ function ($scope, $routeParams, GameManager) {
     function onClick(evt) {
 
         if(!isModelDirty) {
-            var rect = canvas.getBoundingClientRect();
-            var x = evt.clientX - rect.left;
-            var y = evt.clientY - rect.top;
 
-            var indexArr = getIndexFromMousePosition(x, y, ratio); //x[0], y[1];
-            indexArr[1] = 0;
+            var mousePos = getMouseClickPosition(canvas, evt);
 
-            if(gridModel[indexArr[1]][indexArr[0]] == GameManager.NONE) {
-                currentTokenPositionInGrid = indexArr;
-                currentPlayer = currentPlayer == GameManager.PLAYER_1 ? GameManager.PLAYER_2 : GameManager.PLAYER_1; // switch current player
-                gridModel[indexArr[1]][indexArr[0]] = currentPlayer;
-            }
+            console.log(mousePos);
+
+            processAnimation(mousePos.x, mousePos.y);
         }
+    }
 
+    function getMouseClickPosition(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+            x : evt.clientX - rect.left,
+            y : evt.clientY - rect.top
+        };
+    }
+
+    function processAnimation(clickX, clickY) {
+
+        var rect = canvas.getBoundingClientRect();
+        var x = clickX - rect.left;
+        var y = clickY - rect.top;
+
+        var indexArr = getIndexFromMousePosition(x, y, ratio); //x[0], y[1];
+        indexArr[1] = GameManager.NONE;
+
+        if(gridModel[indexArr[1]][indexArr[0]] == GameManager.NONE) {
+            currentTokenPositionInGrid = indexArr;
+            GameManager.switchCurrentPlayer();
+            gridModel[indexArr[1]][indexArr[0]] = GameManager.currentPlayer;
+        }
     }
 
     //
@@ -75,10 +102,10 @@ function ($scope, $routeParams, GameManager) {
         drawGrid(context, width, height);
         drawTokens(context, gridModel, gridX, gridY, gap, radius, diam);
 
-        doAnimation();
+        renderAnimation();
     }
 
-    function doAnimation() {
+    function renderAnimation() {
         if(currentTokenPositionInGrid != undefined) {
 
             check(currentTokenPositionInGrid[0], currentTokenPositionInGrid[1]);
@@ -100,7 +127,7 @@ function ($scope, $routeParams, GameManager) {
         if(nextLineValue == 0) {
             isModelDirty = true;
             gridModel[y][x] = 0;
-            gridModel[y+1][x] = currentPlayer;
+            gridModel[y+1][x] = GameManager.currentPlayer;
         }
     }
 
