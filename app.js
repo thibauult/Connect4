@@ -3,7 +3,10 @@
  */
 var connect4App = angular.module('connect4App', [
     'ngRoute',
-    'connect4Controllers'
+    'connect4Controllers',
+    // Connect 4 modules
+    'c4Utils',
+    'c4Grid'
 ]);
 
 connect4App.config(['$routeProvider',

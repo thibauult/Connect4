@@ -11,3 +11,8 @@
     -webkib-text-shadow: 1px 1px 1px #656565;
     -moz-text-shadow: 1px 1px 1px #656565;
 }
+
+.jumbotron canvas {
+    width: 100%;
+    height: 100%;
+}

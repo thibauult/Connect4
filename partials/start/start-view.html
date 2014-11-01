@@ -1,44 +1,39 @@
-<div class="row">
+<div class="row" ng-controller="StartCtrl">
 
     <div class="jumbotron">
 
         <h1>Game Configuration</h1>
 
-        <form class="form-horizontal" role="form" ng-controller="StartCtrl">
+        <form role="form">
 
-            <div class="form-group" ng-class="{ true: 'has-error' }[ player1.hasError ]">
-                <label for="inputPlayer1" class="col-sm-2 control-label">Player 1</label>
-                <div class="col-sm-10">
-                    <input ng-model="player1.value" type="text" class="form-control" id="inputPlayer1" placeholder="Player 1">
-                </div>
+            <div class="form-group has-feedback" ng-class="{ true: 'has-error' }[ player1.hasError ]">
+                <label for="inputPlayer1" class="control-label">Player 1</label>
+                <input ng-model="player1.value" type="text" class="form-control" id="inputPlayer1" placeholder="Player 1">
+                <span class="glyphicon glyphicon-ok form-control-feedback"></span>
             </div>
 
-            <div class="form-group" ng-class="{ true: 'has-error' }[ player2.hasError ]">
+            <div class="form-group has-feedback" ng-class="{ true: 'has-error' }[ player2.hasError ]">
                 <label for="inputPlayer2" class="col-sm-2 control-label">Player 2</label>
-                <div class="col-sm-10">
-                    <input ng-model="player2.value" type="text" class="form-control" id="inputPlayer2" placeholder="Player 2">
-                </div>
+                <input ng-model="player2.value" type="text" class="form-control" id="inputPlayer2" placeholder="Player 2">
+                <span class="glyphicon glyphicon-ok form-control-feedback"></span>
             </div>
 
-            <div class="form-group">
+            <div class="form-group has-feedback" ng-class="{ true: 'has-error' }[ nbRounds.hasError ]">
                 <label for="inputNbRound" class="col-sm-2 control-label">Number of rounds</label>
-                <div class="col-sm-10">
-                    <input ng-model="nbRounds.value" type="text" class="form-control" id="inputNbRound" placeholder="Player 2">
-                </div>
+                <input ng-model="nbRounds.value" type="text" class="form-control" id="inputNbRound" placeholder="Rounds">
+                <span class="glyphicon glyphicon-ok form-control-feedback"></span>
             </div>
 
-            <div class="form-group">
-                <label for="inputGridX" class="col-sm-2 control-label">Gird X</label>
-                <div class="col-sm-10">
-                    <input ng-model="gridX.value" type="text" class="form-control" id="inputGridX" placeholder="Player 2">
-                </div>
+            <div class="form-group has-feedback" ng-class="{ true: 'has-error' }[ gridX.hasError ]">
+                <label for="inputGridX" class="col-sm-2 control-label">Grid X</label>
+                <input ng-model="gridX.value" type="text" class="form-control" id="inputGridX" placeholder="Grid Y">
+                <span class="glyphicon glyphicon-ok form-control-feedback"></span>
             </div>
 
-            <div class="form-group">
-                <label for="inputGridY" class="col-sm-2 control-label">Gird X</label>
-                <div class="col-sm-10">
-                    <input ng-model="gridY.value" type="text" class="form-control" id="inputGridY" placeholder="Player 2">
-                </div>
+            <div class="form-group has-feedback" ng-class="{ true: 'has-error' }[ gridY.hasError ]">
+                <label for="inputGridY" class="col-sm-2 control-label">Grid Y</label>
+                <input ng-model="gridY.value" type="text" class="form-control" id="inputGridY" placeholder="Grid X">
+                <span class="glyphicon glyphicon-ok form-control-feedback"></span>
             </div>
 
             <button ng-click="start()" class="btn btn-default ">Start !</button>
