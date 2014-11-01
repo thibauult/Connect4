@@ -5,7 +5,7 @@ angular.module('c4Utils', [])
 .service('UiService', function() {
 
         this.NOT_EMPTY = function() {
-            return this.value != '';
+            return this.value != undefined && this.value != '';
         };
 
         this.newField = function newField(defaultValue, validateCallback) {

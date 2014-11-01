@@ -9,156 +9,157 @@ Game.PLAYER_2 = 2;
 
 Game.DEBUG = false;
 
-connect4Controllers.controller('GameCtrl', ['$scope', '$routeParams',
-    function ($scope, $routeParams) {
+c4Controllers.controller('GameCtrl', ['$scope', '$routeParams', 'GameManager',
+function ($scope, $routeParams, GameManager) {
 
-        $scope.player1 = $routeParams.player1;
-        $scope.player2 = $routeParams.player2;
-        $scope.nbRounds = $routeParams.nbRounds;
+    $scope.player1 = $routeParams.player1;
+    $scope.player2 = $routeParams.player2;
+    GameManager.nbRounds = $routeParams.nbRounds;
 
-        var nbLine = $routeParams.gridX;
-        var nbColumn = $routeParams.gridY;
+    var gridX = $routeParams.gridX;
+    var gridY = $routeParams.gridY;
 
-        var gridRatio = 100;
+    var gridModel = createGridModel(gridX, gridY);
 
-        var gridWidth = nbColumn* gridRatio;
-        var gridHeight = nbLine * gridRatio;
+    var ratio = 100;
+    var gap = 10;
 
-        var gap = 10;
-        var diam = gridWidth / nbColumn;
-        var radius = diam / 2 - gap;
+    var width  = gridY * ratio;
+    var height = gridX * ratio;
 
-        //Init grid model -> first index = line, second index = column
-        var gridModel = new Array(nbLine);
-        for (var i = 0; i < nbLine; i++) {
-            gridModel[i] = new Array(nbColumn);
-        }
-        for(var y = 0; y<nbLine; y++) {
-            for (var x = 0; x < nbColumn; x++) {
-                gridModel[y][x] = 0;
+    var diam = width / gridY;
+    var radius = diam / 2 - gap;
+
+    var currentTokenPositionInGrid;
+    var currentPlayer = GameManager.PLAYER_1;
+    var isModelDirty = false;
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+
+    canvas.width = width;
+    canvas.height = height;
+    context.globalAlpha = 1.0;
+    canvas.addEventListener(GameManager.CLICK_EVENT_TYPE, onClick, false);
+    setInterval(animate, 100); // initialize rendering loop
+
+    //
+    // ON CLICK CALLBACK
+    //
+    function onClick(evt) {
+
+        if(!isModelDirty) {
+            var rect = canvas.getBoundingClientRect();
+            var x = evt.clientX - rect.left;
+            var y = evt.clientY - rect.top;
+
+            var indexArr = getIndexFromMousePosition(x, y, ratio); //x[0], y[1];
+            indexArr[1] = 0;
+
+            if(gridModel[indexArr[1]][indexArr[0]] == GameManager.NONE) {
+                currentTokenPositionInGrid = indexArr;
+                currentPlayer = currentPlayer == GameManager.PLAYER_1 ? GameManager.PLAYER_2 : GameManager.PLAYER_1; // switch current player
+                gridModel[indexArr[1]][indexArr[0]] = currentPlayer;
             }
         }
 
-        //Test
-        if(Game.DEBUG) {
-            gridModel[0][0] = 1;
-            gridModel[1][0] = 2;
-            gridModel[1][1] = 2;
-        }
+    }
 
-        var canvas = document.getElementById('canvas');
-        var context = canvas.getContext('2d');
+    //
+    // RENDERING LOOP
+    //
+    function animate() {
 
-        canvas.width = gridWidth;
-        canvas.height = gridHeight;
-        context.globalAlpha = 1.0;
+        context.clearRect(0, 0, canvas.width, canvas.height);
 
-        setInterval(animate, 100);
+        drawGrid(context, width, height);
+        drawTokens(context, gridModel, gridX, gridY, gap, radius, diam);
 
-        var currentTokenPositionInGrid;
-        var currentPlayer = Game.PLAYER_1;
-        var isModelDirty = false;
+        doAnimation();
+    }
 
-        canvas.addEventListener('mousedown', function(evt) {
+    function doAnimation() {
+        if(currentTokenPositionInGrid != undefined) {
 
-            if(!isModelDirty) {
-                var rect = canvas.getBoundingClientRect();
-                var x = evt.clientX - rect.left;
-                var y = evt.clientY - rect.top;
+            check(currentTokenPositionInGrid[0], currentTokenPositionInGrid[1]);
 
-                var indexArr = getIndexFromMousePosition(x, y); //x[0], y[1];
-                indexArr[1] = 0;
-
-                if(gridModel[indexArr[1]][indexArr[0]] == 0) {
-                    currentTokenPositionInGrid = indexArr;
-                    currentPlayer = switchPlayer(currentPlayer);
-                    gridModel[indexArr[1]][indexArr[0]] = currentPlayer;
-                }
-            }
-
-        }, false);
-
-        function animate() {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            drawGrid()
-            drawTokens();
-
-            checkAnimation();
-        }
-
-        function getNextLineValue(x, y) {
-            return gridModel[y+1][x];
-        }
-
-
-        function checkAnimation() {
-            if(currentTokenPositionInGrid != undefined) {
-                check(currentTokenPositionInGrid[0], currentTokenPositionInGrid[1]);
-                if(currentTokenPositionInGrid[1] + 1 <= nbLine)
-                    currentTokenPositionInGrid[1] = currentTokenPositionInGrid[1] + 1;
+            if(currentTokenPositionInGrid[1] + 1 <= gridX) {
+                currentTokenPositionInGrid[1]++;
             }
         }
+    }
 
-        function check(x, y) {
-            console.log("x="+x + ", y="+y);
-            if(y+1 >= nbLine) {
-                isModelDirty = false;
-                return;
-            }
+    function check(x, y) {
 
-            var nextLineValue = getNextLineValue(x, y);
-            if(nextLineValue == 0) {
-                isModelDirty = true;
-                gridModel[y][x] = 0;
-                gridModel[y+1][x] = currentPlayer;
-            }
+        if((y + 1) >= gridX) {
+            isModelDirty = false;
+            return;
         }
 
-
-        function drawToken(x, y, radius, indexX, indexY) {
-            context.beginPath();
-
-            var currentValue = gridModel[indexY][indexX];
-
-            if(currentValue == 0){
-                context.fillStyle = "#ffffff";
-            } else if(currentValue == 1) {
-                context.fillStyle = "#ff0000";
-            } else if(currentValue == 2) {
-                context.fillStyle = "#ffff00";
-            }
-            context.arc(x, y, radius, 0, 2*Math.PI, false);
-            context.fill();
+        var nextLineValue = gridModel[y+1][x];
+        if(nextLineValue == 0) {
+            isModelDirty = true;
+            gridModel[y][x] = 0;
+            gridModel[y+1][x] = currentPlayer;
         }
+    }
 
-        function drawTokens() {
+}]);
 
-            for(var y = 0; y<nbLine; y++) {
-                for(var x=0; x<nbColumn;x++) {
-                    drawToken(gap+radius+x*diam, gap+radius+y*diam, radius, x, y);
-                }
-            }
+function createGridModel(nbLine, nbColumn) {
+
+    var gridModel = new Array(nbLine);
+
+    for (var i = 0; i < nbLine; i++) {
+        gridModel[i] = new Array(nbColumn);
+    }
+
+    for(var y = 0; y<nbLine; y++) {
+        for (var x = 0; x < nbColumn; x++) {
+            gridModel[y][x] = 0;
         }
+    }
 
-        function drawGrid() {
+    return gridModel;
+}
 
-            context.beginPath();
-            context.fillStyle = "#0000ff";
-            context.fillRect(0, 0, gridWidth, gridHeight);
+function drawGrid(context, gridWidth, gridHeight) {
+
+    context.beginPath();
+    context.fillStyle = "#0000ff";
+    context.fillRect(0, 0, gridWidth, gridHeight);
+}
+
+function drawTokens(context, gridModel, gridX, gridY, gap, radius, diam) {
+
+    for(var y = 0; y<gridX; y++) {
+        for(var x=0; x<gridY;x++) {
+            drawToken(context, gridModel, gap + radius + (x * diam), gap + radius + (y * diam), radius, x, y);
         }
+    }
+}
 
-        function getIndexFromMousePosition(x, y) {
-            var index = [];
+function drawToken(context, gridModel, x, y, radius, indexX, indexY) {
+    context.beginPath();
 
-            index[0] = Math.floor(x / gridRatio);
-            index[1] = Math.floor(y / gridRatio);
+    var currentValue = gridModel[indexY][indexX];
 
-            return index;
-        }
-    }]
-);
+    if(currentValue == 0){
+        context.fillStyle = "#ffffff";
+    } else if(currentValue == 1) {
+        context.fillStyle = "#ff0000";
+    } else if(currentValue == 2) {
+        context.fillStyle = "#ffff00";
+    }
+    context.arc(x, y, radius, 0, (2 * Math.PI), false);
+    context.fill();
+}
 
-function switchPlayer(currentPlayer) {
-    return currentPlayer == Game.PLAYER_1 ? Game.PLAYER_2 : Game.PLAYER_1;
+function getIndexFromMousePosition(x, y, ratio) {
+    var index = [];
+
+    index[0] = Math.floor(x / ratio);
+    index[1] = Math.floor(y / ratio);
+
+    return index;
 }

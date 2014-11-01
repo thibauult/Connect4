@@ -2,7 +2,7 @@
  * Created by tibus on 31/10/14.
  */
 
-connect4Controllers.controller('StartCtrl', ['$scope', '$location', '$http', 'UiService',
+c4Controllers.controller('StartCtrl', ['$scope', '$location', '$http', 'UiService',
     function ($scope, $location, $http, UiService) {
 
         $scope.player1 = UiService.newField('', UiService.NOT_EMPTY);
