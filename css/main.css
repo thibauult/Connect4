@@ -1,0 +1,13 @@
+/**
+ * Created by tibus on 31/10/14.
+ */
+.jumbotron {
+    padding: 10px;
+    margin: 10px
+}
+
+.jumbotron h1 {
+    text-shadow: 1px 1px 1px #656565;
+    -webkib-text-shadow: 1px 1px 1px #656565;
+    -moz-text-shadow: 1px 1px 1px #656565;
+}

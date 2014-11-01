@@ -1,0 +1,28 @@
+/**
+ * Created by tibus on 31/10/14.
+ */
+var connect4App = angular.module('connect4App', [
+    'ngRoute',
+    'connect4Controllers'
+]);
+
+connect4App.config(['$routeProvider',
+    function($routeProvider) {
+        $routeProvider.
+            when('/start', {
+                templateUrl: 'partials/start/start-view.html',
+                controller: 'StartCtrl'
+            }).
+            when('/game/:player1/:player2/:nbRounds/:gridX/:gridY', {
+                templateUrl: 'partials/game/game-view.html',
+                controller: 'GameCtrl'
+            }).
+            when('/final', {
+                templateUrl: 'partials/final/final-view.html',
+                controller: 'FinalCtrl'
+            }).
+            otherwise({
+                redirectTo: '/start'
+            });
+    }]
+);
