@@ -25,7 +25,8 @@ function ($scope, $routeParams, $interval, GameManager) {
     // init GameManager
     GameManager.nbRounds = $routeParams.totalRounds;
     GameManager.currentPlayer = GameManager.PLAYER_1;
-
+    GameManager.gridX = $routeParams.gridX;
+    GameManager.gridY = $routeParams.gridY;
 
     var gridX = $routeParams.gridX;
     var gridY = $routeParams.gridY;
@@ -59,21 +60,8 @@ function ($scope, $routeParams, $interval, GameManager) {
     function onClick(evt) {
 
         if(!isModelDirty) {
-
-            var mousePos = getMouseClickPosition(canvas, evt);
-
-            console.log(mousePos);
-
-            processAnimation(mousePos.x, mousePos.y);
+            processAnimation(evt.clientX, evt.clientY);
         }
-    }
-
-    function getMouseClickPosition(canvas, evt) {
-        var rect = canvas.getBoundingClientRect();
-        return {
-            x : evt.clientX - rect.left,
-            y : evt.clientY - rect.top
-        };
     }
 
     function processAnimation(clickX, clickY) {
@@ -87,8 +75,15 @@ function ($scope, $routeParams, $interval, GameManager) {
 
         if(gridModel[indexArr[1]][indexArr[0]] == GameManager.NONE) {
             currentTokenPositionInGrid = indexArr;
+
             GameManager.switchCurrentPlayer();
             gridModel[indexArr[1]][indexArr[0]] = GameManager.currentPlayer;
+
+            if(GameManager.checkWinner(gridModel) != GameManager.NONE) {
+                updateScores($scope, GameManager);
+            } else {
+                console.log("no winner");
+            }
         }
     }
 
@@ -161,7 +156,11 @@ function drawTokens(context, gridModel, gridX, gridY, gap, radius, diam) {
 
     for(var y = 0; y<gridX; y++) {
         for(var x=0; x<gridY;x++) {
-            drawToken(context, gridModel, gap + radius + (x * diam), gap + radius + (y * diam), radius, x, y);
+
+            var xPos = gap + radius + (x * diam);
+            var yPos = gap + radius + (y * diam);
+
+            drawToken(context, gridModel, xPos, yPos, radius, x, y);
         }
     }
 }
@@ -189,4 +188,9 @@ function getIndexFromMousePosition(x, y, ratio) {
     index[1] = Math.floor(y / ratio);
 
     return index;
+}
+
+function updateScores($scope, GameManager) {
+    $scope.player1.score = GameManager.player1Score;
+    $scope.player1.score = GameManager.player1Score;
 }
