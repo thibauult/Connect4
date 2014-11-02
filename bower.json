@@ -13,7 +13,8 @@
   "dependencies": {
     "bootstrap": "~3.3.0",
     "angular": "~1.3.0",
-    "angular-route": "~1.3.0"
+    "angular-route": "~1.3.0",
+    "animate.css" : "~3.2.0"
   },
   "authors": [
     "tibus29 <thibault.pensec@live.fr>"

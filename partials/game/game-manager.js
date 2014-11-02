@@ -160,6 +160,7 @@ angular.module('c4GameManager', [])
         }
 
         /**
+         * TODO documentation
          *
          * @param type
          * @return {string}
@@ -178,10 +179,31 @@ angular.module('c4GameManager', [])
         }
 
         /**
+         * TODO documentation
          *
          * @return {number}
          */
         this.getProgression = function() {
             return Math.floor((this.rounds / this.totalRounds) * 100);
+        }
+
+        /**
+         *
+         * @param deviceWidth
+         * @return {*}
+         */
+        this.computeRatio = function(deviceWidth) {
+
+            var ratio;
+
+            if(deviceWidth < 992) { // Small devices (tablets, 768px and up)
+                ratio = 0.5;
+            } else if(deviceWidth >= 992 && deviceWidth < 1200) { // Medium devices (desktops, 992px and up)
+                ratio = 0.75;
+            } else if(deviceWidth > 1200) { // Large devices (large desktops, 1200px and up)
+                ratio = 1;
+            }
+
+            return ratio;
         }
 });

@@ -9,8 +9,8 @@ Game.PLAYER_2 = 2;
 
 Game.DEBUG = false;
 
-c4Controllers.controller('GameCtrl', ['$scope', '$routeParams', '$interval', '$window', 'GameManager',
-function ($scope, $routeParams, $interval, $window, GameManager) {
+c4Controllers.controller('GameCtrl', ['$scope', '$routeParams', '$interval', '$window', '$location', 'GameManager', 'UiService',
+function ($scope, $routeParams, $interval, $window, $location, GameManager, UiService) {
 
     //
     // INIT SECTION
@@ -22,10 +22,10 @@ function ($scope, $routeParams, $interval, $window, GameManager) {
     var isAnimating = false;
     var currentToken;
 
-    var ratio = 100;
+    var ratio = GameManager.computeRatio($window.innerWidth);
 
-    var w = GameManager.gridX * ratio;
-    var h = GameManager.gridY * ratio;
+    var w = GameManager.gridX * ratio * 100;
+    var h = GameManager.gridY * ratio * 100;
 
     // initialize canvas
     var canvas = document.getElementById('canvas');
@@ -79,7 +79,7 @@ function ($scope, $routeParams, $interval, $window, GameManager) {
     function startAnimation(clickX) {
 
         var rect = canvas.getBoundingClientRect();
-        var x = Math.floor((clickX - rect.left) / ratio);
+        var x = Math.floor((clickX - rect.left) / (ratio * 100));
         var y = 0; // in all cases, animation starts by the top of the grid
 
         if(GameManager.grid[x][y] == GameManager.NONE) {
@@ -120,17 +120,7 @@ function ($scope, $routeParams, $interval, $window, GameManager) {
             currentToken.y++;
         } else {
             isAnimating = false;
-
-            var winner = GameManager.checkWinner();
-            if(winner != GameManager.NONE) {
-
-                GameManager.reset();
-                $scope.progess = GameManager.getProgression();
-                $scope.progessStyle = 'width: ' + $scope.progess + '%;';
-                $scope.player1.score = GameManager.player1Score;
-                $scope.player2.score = GameManager.player2Score;
-            }
-            GameManager.switchCurrentPlayer();
+            progessGame();
         }
     }
 
@@ -154,5 +144,31 @@ function ($scope, $routeParams, $interval, $window, GameManager) {
         drawContext.context.fillStyle = color;
         drawContext.context.arc(x, y, radius, 0, (2 * Math.PI), false);
         drawContext.context.fill();
+    }
+
+    //
+    // PROGRESS GAME
+    //
+    function progessGame() {
+
+        // First, check if there is a winner
+        var winner = GameManager.checkWinner();
+        if(winner != GameManager.NONE) {
+
+            GameManager.reset();
+            $scope.progess = GameManager.getProgression();
+            $scope.progessStyle = 'width: ' + $scope.progess + '%;';
+            $scope.player1.score = GameManager.player1Score;
+            $scope.player2.score = GameManager.player2Score;
+
+            if(GameManager.getProgression() >= 100) {
+
+                $location.path(
+                    UiService.buildRouteWithParams('final')
+                );
+            }
+        }
+
+        GameManager.switchCurrentPlayer();
     }
 }]);
