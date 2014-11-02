@@ -28,25 +28,30 @@ body {
     list-style: none;
 }
 
-#game .glyphicon {
-    text-align: right;
+#game canvas {
+    margin-top: 10px;
+    cursor: none;
+}
+
+#game .scores {
+    height: auto;
+}
+
+.player {
+    margin-right: 20px;
+    line-height: 15px;
+    font-weight: bold;
+}
+
+.player1 .badge {
+    background-color: red;
     font-size: 1.1em;
-    text-shadow: -1px -1px 1px rgba(150, 150, 150, 1);
+    border: 1px solid #ffffff;
 }
 
-#game .player .row {
-    height: 20px;
-    margin-bottom: 5px;
-}
-
-#game .player span {
-    line-height: 10px;
-}
-
-#game .player1 .glyphicon {
-    color: red;
-}
-
-#game .player2 .glyphicon {
-    color: #ffff00;
+.player2 .badge {
+    background-color: #ffff00;
+    font-size: 1.1em;
+    color: dimgrey;
+    border: 1px solid gray;
 }

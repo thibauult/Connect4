@@ -1,5 +1,17 @@
-<div class="jumbotron">
+<div id="start" class="row animated fadeInLeft" ng-controller="FinalCtrl">
 
-    <h1>Final</h1>
+    <div class="jumbotron">
+        <h1>Congratulations !</h1>
+        <p class="lead"><strong>{{ winner }}</strong> won the match !</p>
+
+        <p>{{ player1.name }} reflexion time : <strong>{{ player1.reflexionTime | date: "s,sss 's'" }}</strong></p>
+        <p>{{ player2.name }} reflexion time : <strong>{{ player2.reflexionTime | date: "s,sss 's'" }}</strong></p>
+
+        <p>
+            <a class="btn btn-lg btn-success" ng-click="restart()" role="button">
+                Restart with previous configuration
+            </a>
+        </p>
+    </div>
 
 </div>

@@ -17,7 +17,7 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
     //
 
     // init GameManager from the route params
-    GameManager.init($routeParams.gridX, $routeParams.gridY, $routeParams.nbRounds);
+    GameManager.init($routeParams.gridX, $routeParams.gridY, $routeParams.nbRounds, $routeParams.player1, $routeParams.player2);
 
     var isAnimating = false;
     var currentToken;
@@ -37,14 +37,16 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
 
     // initialize click callback
     canvas.addEventListener(GameManager.CLICK_EVENT_TYPE, onClick, false);
+    canvas.addEventListener(GameManager.MOUSE_MOVE_EVENT, onMouseMove, false);
 
     // initialize rendering loop (100 fps)
-    $interval(animate, 100);
+    $interval(animate, 50);
 
     var gapInPercent = 15;
     var diam = canvas.width / GameManager.gridX;
     var gap = diam/2 * (gapInPercent / 100);
     var radius = diam / 2 - gap;
+    var cursorPosition;
 
     var drawContext = {
         context : context,
@@ -61,7 +63,6 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
     //
     $scope.player1 = { score: 0, pseudo: $routeParams.player1 };
     $scope.player2 = { score: 0, pseudo: $routeParams.player2 };
-    $scope.message = 'Le joueur 1 a gagné !';
     $scope.progessBarWidth = 'width: ' + w + 'px';
     $scope.progess = GameManager.getProgression();
     $scope.progessStyle = 'width: ' + $scope.progess + '%;';
@@ -74,6 +75,18 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
         if(!isAnimating) {
             startAnimation(evt.clientX);
         }
+    }
+
+    function onMouseMove(evt) {
+
+        if(cursorPosition == undefined) {
+            cursorPosition = [];
+        }
+
+        var rect = canvas.getBoundingClientRect();
+
+        cursorPosition[0] = evt.clientX - rect.left;
+        cursorPosition[1] = evt.clientY - rect.top;
     }
 
     function startAnimation(clickX) {
@@ -105,6 +118,8 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
 
         if(isAnimating) {
             renderAnimation();
+        } else {
+            drawCursor(drawContext, cursorPosition);
         }
     }
 
@@ -146,6 +161,16 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
         drawContext.context.fill();
     }
 
+    function drawCursor(drawContext, cursorPosition) {
+
+        if(cursorPosition != undefined) {
+            drawContext.context.beginPath();
+            drawContext.context.fillStyle = GameManager.getColor(GameManager.currentPlayer);
+            drawContext.context.arc(cursorPosition[0], cursorPosition[1], radius, 0, (2 * Math.PI), false);
+            drawContext.context.fill();
+        }
+    }
+
     //
     // PROGRESS GAME
     //
@@ -158,8 +183,8 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
             GameManager.reset();
             $scope.progess = GameManager.getProgression();
             $scope.progessStyle = 'width: ' + $scope.progess + '%;';
-            $scope.player1.score = GameManager.player1Score;
-            $scope.player2.score = GameManager.player2Score;
+            $scope.player1.score = GameManager.player[1].score;
+            $scope.player2.score = GameManager.player[2].score;
 
             if(GameManager.getProgression() >= 100) {
 

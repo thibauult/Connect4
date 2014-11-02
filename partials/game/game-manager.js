@@ -12,6 +12,7 @@ angular.module('c4GameManager', [])
         this.PLAYER_2 = 2;
 
         this.CLICK_EVENT_TYPE = 'mousedown';
+        this.MOUSE_MOVE_EVENT = 'mousemove';
 
         //
         // ATTRIBUTES
@@ -21,12 +22,29 @@ angular.module('c4GameManager', [])
         this.gridX = 7;
         this.gridY = 6;
 
-        this.player1Score = 0;
-        this.player2Score = 0;
-        this.currentPlayer = this.PLAYER_1;
+        this.player = [
+            {},
+            {
+                name : '',
+                score : 0,
+                reflexion : [],
+                hits : 0
+            },
+            {
+                name : '',
+                score : 0,
+                reflexion : [],
+                hits : 0
+            }
+        ];
+
+        this.currentPlayer;
+        this.winner = this.NONE;
 
         this.totalRounds = 1;
         this.rounds = 0;
+
+        this.startTime = -1;
 
         //
         // METHODS
@@ -37,12 +55,17 @@ angular.module('c4GameManager', [])
          * @param gridX Columns
          * @param gridY Lines
          */
-        this.init = function(gridX, gridY, totalRounds) {
+        this.init = function(gridX, gridY, totalRounds, player1, player2) {
 
             this.gridX = gridX;
             this.gridY = gridY;
             this.totalRounds = totalRounds;
             this.rounds = 0;
+            this.currentPlayer = Math.floor((Math.random() * 2) + 1);
+            this.player[1].name = player1;
+            this.player[2].name = player2;
+
+            this.startTime = new Date().getTime();
 
             this.grid = new Array(gridX);
             for (var x = 0; x < gridX; x++) {
@@ -54,17 +77,31 @@ angular.module('c4GameManager', [])
         }
 
         this.reset = function() {
+
             for(var x = 0; x < this.gridX; x++) {
                 for (var y = 0; y < this.gridY; y++) {
                     this.grid[x][y] = this.NONE;
                 }
             }
+
+            this.startTime = new Date().getTime();
         }
 
         /**
          * Switch the current player
          */
         this.switchCurrentPlayer = function() {
+
+            // compute the reflexion time
+            var hits = this.player[this.currentPlayer].hits;
+            var currentTime = new Date().getTime();
+            var deltaTime = currentTime - this.startTime;
+            this.player[this.currentPlayer].reflexion[hits] = deltaTime;
+            this.player[this.currentPlayer].hits++;
+
+            // reset start time
+            this.startTime = currentTime;
+
             this.currentPlayer = this.currentPlayer == this.PLAYER_1 ?
                     this.PLAYER_2 :
                     this.PLAYER_1;
@@ -80,12 +117,12 @@ angular.module('c4GameManager', [])
             var winner = this.NONE;
 
             if(checkAlignment(this.PLAYER_1, this.grid, this.gridX, this.gridY)) {
-                this.player1Score++;
+                this.player[1].score++;
                 winner = this.PLAYER_1;
             }
 
             if(winner == this.NONE && checkAlignment(this.PLAYER_2, this.grid, this.gridX, this.gridY)) {
-                this.player2Score++;
+                this.player[2].score++;
                 winner = this.PLAYER_2;
             }
 
