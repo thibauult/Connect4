@@ -2,6 +2,10 @@
  * Created by tibus on 31/10/14.
  */
 
+body {
+    background: #eeeeee;
+}
+
 .header {
     margin-bottom: 30px;
     border-bottom: 1px solid #e5e5e5;
@@ -12,11 +16,6 @@
     font-size: 24px;
     line-height: 40px;
     margin: 10px;
-}
-
-.jumbotron {
-    padding: 10px;
-    margin: 10px
 }
 
 #game .glyphicon {
