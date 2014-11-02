@@ -1,14 +1,6 @@
 /**
  * Created by tibus on 31/10/14.
  */
-
-var Game = {};
-
-Game.PLAYER_1 = 1;
-Game.PLAYER_2 = 2;
-
-Game.DEBUG = false;
-
 c4Controllers.controller('GameCtrl', ['$scope', '$routeParams', '$interval', '$window', '$location', 'GameManager', 'UiService',
 function ($scope, $routeParams, $interval, $window, $location, GameManager, UiService) {
 
@@ -180,9 +172,7 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
     //
     function progessGame() {
 
-        // First, check if there is a winner
-        var winner = GameManager.checkWinner();
-        if(winner != GameManager.NONE) {
+        if(GameManager.isFull() || GameManager.checkWinner()) {
 
             GameManager.reset();
             $scope.progess = GameManager.getProgression();

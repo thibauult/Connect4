@@ -22,8 +22,7 @@ angular.module('c4GameManager', [])
         this.gridX = 7;
         this.gridY = 6;
 
-        this.player = [
-            {},
+        this.player = [ {},
             {
                 name : '',
                 score : 0,
@@ -39,7 +38,6 @@ angular.module('c4GameManager', [])
         ];
 
         this.currentPlayer;
-        this.winner = this.NONE;
 
         this.totalRounds = 1;
         this.rounds = 0;
@@ -197,6 +195,23 @@ angular.module('c4GameManager', [])
         }
 
         /**
+         * Check if the model if full
+         * @return {boolean}
+         */
+        this.isFull = function() {
+            for(var x = 0; x < this.gridX; x++) {
+                for (var y = 0; y < this.gridY; y++) {
+                    if(this.grid[x][y] == this.NONE) {
+                        return false;
+                    }
+                }
+            }
+
+            this.rounds++;
+            return true;
+        }
+
+        /**
          * TODO documentation
          *
          * @param type
@@ -227,7 +242,7 @@ angular.module('c4GameManager', [])
         /**
          *
          * @param deviceWidth
-         * @return {*}
+         * @return {double}
          */
         this.computeRatio = function(deviceWidth) {
 

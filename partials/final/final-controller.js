@@ -11,7 +11,16 @@ c4Controllers.controller('FinalCtrl', ['$scope', '$routeParams', '$location', 'G
             );
         }
 
-        $scope.winner = GameManager.player[1].name;
+        $scope.equality = !(GameManager.player[1].score - GameManager.player[2].score);
+
+        $scope.winner = '';
+        if(!$scope.equality) {
+            if(GameManager.player[1].score > GameManager.player[2].score) {
+                $scope.winner = GameManager.player[1].name;
+            } else {
+                $scope.winner = GameManager.player[2].name;
+            }
+        }
 
         $scope.player1 = {};
         $scope.player2 = {};
