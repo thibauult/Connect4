@@ -35,10 +35,6 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
     canvas.height = h;
     context.globalAlpha = 1.0;
 
-    // initialize click callback
-    canvas.addEventListener(GameManager.CLICK_EVENT_TYPE, onClick, false);
-    canvas.addEventListener(GameManager.MOUSE_MOVE_EVENT, onMouseMove, false);
-
     // initialize rendering loop (100 fps)
     $interval(animate, 50);
 
@@ -46,7 +42,7 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
     var diam = canvas.width / GameManager.gridX;
     var gap = diam/2 * (gapInPercent / 100);
     var radius = diam / 2 - gap;
-    var cursorPosition;
+    var cursorPosition, showMouse;
 
     var drawContext = {
         context : context,
@@ -57,6 +53,14 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
         width: w,
         height: h
     };
+
+    //
+    // INIT CALLBACK
+    //
+    canvas.addEventListener(GameManager.CLICK_EVENT_TYPE, onClick, false);
+    canvas.addEventListener(GameManager.MOUSE_MOVE_EVENT, onMouseMove, false);
+    canvas.addEventListener('mouseenter', function() { showMouse = true; }, false);
+    canvas.addEventListener('mouseleave', function() { showMouse = false; }, false);
 
     //
     // INIT SCOPE
@@ -118,7 +122,7 @@ function ($scope, $routeParams, $interval, $window, $location, GameManager, UiSe
 
         if(isAnimating) {
             renderAnimation();
-        } else {
+        } else if(!isAnimating && showMouse) {
             drawCursor(drawContext, cursorPosition);
         }
     }
