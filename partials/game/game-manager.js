@@ -42,6 +42,7 @@ angular.module('c4GameManager', [])
             this.gridX = gridX;
             this.gridY = gridY;
             this.totalRounds = totalRounds;
+            this.rounds = 0;
 
             this.grid = new Array(gridX);
             for (var x = 0; x < gridX; x++) {
@@ -174,5 +175,13 @@ angular.module('c4GameManager', [])
             }
 
             return color;
+        }
+
+        /**
+         *
+         * @return {number}
+         */
+        this.getProgression = function() {
+            return Math.floor((this.rounds / this.totalRounds) * 100);
         }
 });

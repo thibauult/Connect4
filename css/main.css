@@ -19,7 +19,16 @@
     margin: 10px
 }
 
-#canvas {
-    /*width: 100%;*/
-    /*height: 100%;*/
+#game .glyphicon {
+    text-align: right;
+    font-size: 1.1em;
+    text-shadow: -1px -1px 1px rgba(150, 150, 150, 1);
+}
+
+#game .player1 .glyphicon {
+    color: red;
+}
+
+#game .player2 .glyphicon {
+    color: #ffff00;
 }

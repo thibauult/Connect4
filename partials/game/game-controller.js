@@ -17,22 +17,7 @@ function ($scope, $routeParams, $interval, $window, GameManager) {
     //
 
     // init GameManager from the route params
-    GameManager.init($routeParams.gridX, $routeParams.gridY, $routeParams.totalRounds);
-
-    // TEST WINNER
-    //GameManager.init(7, 6, 1);
-    //GameManager.grid = [
-    //    [0, 0, 0, 0, 0, 0],
-    //    [0, 0, 0, 2, 0, 0],
-    //    [0, 0, 2, 0, 0, 0],
-    //    [0, 2, 0, 0, 0, 0],
-    //    [2, 0, 0, 0, 0, 0],
-    //    [0, 0, 0, 0, 0, 0],
-    //    [0, 0, 0, 0, 0, 0]
-    //];
-    //
-    //console.log(GameManager.checkWinner(GameManager.grid));
-    // END TEST WINNER
+    GameManager.init($routeParams.gridX, $routeParams.gridY, $routeParams.nbRounds);
 
     var isAnimating = false;
     var currentToken;
@@ -56,7 +41,7 @@ function ($scope, $routeParams, $interval, $window, GameManager) {
     // initialize rendering loop (100 fps)
     $interval(animate, 100);
 
-    var gapInPercent = 10;
+    var gapInPercent = 15;
     var diam = canvas.width / GameManager.gridX;
     var gap = diam/2 * (gapInPercent / 100);
     var radius = diam / 2 - gap;
@@ -70,6 +55,16 @@ function ($scope, $routeParams, $interval, $window, GameManager) {
         width: w,
         height: h
     };
+
+    //
+    // INIT SCOPE
+    //
+    $scope.player1 = { score: 0, pseudo: $routeParams.player1 };
+    $scope.player2 = { score: 0, pseudo: $routeParams.player2 };
+    $scope.message = 'Le joueur 1 a gagné !';
+    $scope.progessBarWidth = 'width: ' + w + 'px';
+    $scope.progess = GameManager.getProgression();
+    $scope.progessStyle = 'width: ' + $scope.progess + '%;';
 
     //
     // ON CLICK CALLBACK
@@ -128,8 +123,12 @@ function ($scope, $routeParams, $interval, $window, GameManager) {
 
             var winner = GameManager.checkWinner();
             if(winner != GameManager.NONE) {
-                console.log("Player " + winner + " won the round !");
+
                 GameManager.reset();
+                $scope.progess = GameManager.getProgression();
+                $scope.progessStyle = 'width: ' + $scope.progess + '%;';
+                $scope.player1.score = GameManager.player1Score;
+                $scope.player2.score = GameManager.player2Score;
             }
             GameManager.switchCurrentPlayer();
         }
